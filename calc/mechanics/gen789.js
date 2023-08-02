@@ -649,7 +649,7 @@ function calculateBPModsSMSSSV(gen, attacker, defender, move, field, desc, baseP
         var item = gen.items.get((0, util_1.toID)(defender.item));
         resistedKnockOffDamage = !!item.megaEvolves && defender.name.includes(item.megaEvolves);
     }
-    if ((move.named('Facade') && attacker.hasStatus('brn', 'par', 'psn', 'tox')) ||
+    if ((move.named('Facade') && (attacker.hasStatus('brn', 'par', 'psn', 'tox') || attacker.hasItem('Flame Orb'))) ||
         (move.named('Brine') && defender.curHP() <= defender.maxHP() / 2) ||
         (move.named('Venoshock') && defender.hasStatus('psn', 'tox')) ||
         (move.named('Lash Out') && ((0, util_2.countBoosts)(gen, attacker.boosts) < 0))) {
@@ -688,7 +688,7 @@ function calculateBPModsSMSSSV(gen, attacker, defender, move, field, desc, baseP
         bpMods.push(6144);
         desc.isHelpingHand = true;
     }
-    var terrainMultiplier = gen.num > 7 ? 5325 : 6144;
+    var terrainMultiplier = 6144;
     if ((0, util_2.isGrounded)(attacker, field)) {
         if ((field.hasTerrain('Electric') && move.hasType('Electric')) ||
             (field.hasTerrain('Grassy') && move.hasType('Grass')) ||
@@ -896,7 +896,7 @@ function calculateAtModsSMSSSV(gen, attacker, defender, move, field, desc) {
         desc.weather = field.weather;
         desc.isFlowerGiftAttacker = true;
     }
-    else if ((attacker.hasAbility('Guts') && attacker.status && move.category === 'Physical') ||
+    else if ((attacker.hasAbility('Guts') && (attacker.status || attacker.hasItem('Flame Orb')) && move.category === 'Physical') ||
         (attacker.curHP() <= attacker.maxHP() / 3 &&
             ((attacker.hasAbility('Overgrow') && move.hasType('Grass')) ||
                 (attacker.hasAbility('Blaze') && move.hasType('Fire')) ||
@@ -1013,6 +1013,9 @@ function calculateDefenseSMSSSV(gen, attacker, defender, move, field, desc, isCr
     if (field.hasWeather('Snow') && defender.hasType('Ice') && hitsPhysical) {
         defense = (0, util_2.pokeRound)((defense * 3) / 2);
         desc.weather = field.weather;
+    }
+    if (move.named('Explosion') || move.named('Self-Destruct') || move.named('Misty Explosion')) {
+        defense = Math.floor(defense * 0.5);
     }
     var dfMods = calculateDfModsSMSSSV(gen, attacker, defender, move, field, desc, isCritical, hitsPhysical);
     return (0, util_2.OF16)(Math.max(1, (0, util_2.pokeRound)((defense * (0, util_2.chainMods)(dfMods, 410, 131072)) / 4096)));

@@ -1006,7 +1006,7 @@ var GSC_PATCH = {
     },
     Azumarill: {
         types: ['Water'],
-        bs: { hp: 100, at: 50, df: 80, sa: 50, sd: 80, sp: 50 },
+        bs: { hp: 100, at: 65, df: 80, sa: 50, sd: 80, sp: 50 },
         weightkg: 28.5
     },
     Bayleef: {
@@ -5304,7 +5304,7 @@ var XY_PATCH = {
     },
     Diggersby: {
         types: ['Normal', 'Ground'],
-        bs: { hp: 85, at: 56, df: 77, sa: 50, sd: 77, sp: 78 },
+        bs: { hp: 85, at: 71, df: 77, sa: 50, sd: 77, sp: 78 },
         weightkg: 42.4,
         abilities: { 0: 'Pickup' }
     },
