@@ -478,14 +478,15 @@ function getSelectedTiers() {
 //		}
 		else {
 			doubleList = "";
-			if($('#customTierName').val().includes("["))
-			{
-				doubleList = $('#customTierName').val().substring(0, $('#customTierName').val().indexOf(" ["));
-			}
-			else
-			{
-				doubleList = $('#customTierName').val();
-			}
+//			if($('#customTierName').val().includes("["))
+//			{
+//				doubleList = $('#customTierName').val().substring(0, $('#customTierName').val().indexOf(" ["));
+//			}
+//			else
+//			{
+//				doubleList = $('#customTierName').val();
+//			}
+			doubleList = $('#customTierName').val();
 			if($('#customTierName').val().includes("&"))
 			{
 				selectedTiers[0] = doubleList.substring(0, $('#customTierName').val().indexOf(" &"));
