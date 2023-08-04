@@ -4,8 +4,7 @@ function placeBsBtn() {
 
 	$("#import.bs-btn").click(function () {
 		var pokes = document.getElementsByClassName("import-team-text")[0].value;
-		var name = document.getElementsByClassName("import-name-text")[0].value.trim() === "" ? "Custom Set" : document.getElementsByClassName("import-name-text")[0].value;
-		addSets(pokes, name);
+		addSets(pokes, null, null);
 	});
 }
 
@@ -270,7 +269,7 @@ function updateDex(customsets) {
 	localStorage.customsets = JSON.stringify(customsets);
 }
 
-function addSets(pokes, name) {
+function addSets(pokes, tierName, tierLevelCap) {
 	var rows = pokes.split("\n");
 	var currentRow;
 	var currentPoke;
@@ -286,21 +285,24 @@ function addSets(pokes, name) {
 				if (j === 1 && currentRow[0].trim()) {
 					currentPoke.nameProp = currentRow[0].trim();
 				} else {
-					currentPoke.nameProp = name;
+					currentPoke.nameProp = "Custom Set";
 				}
+				if(tierName!==null&&tierName!=="")currentPoke.nameProp=tierName+" "+currentPoke.nameProp;
 				currentPoke.isCustomSet = true;
 				currentPoke.ability = getAbility(rows[i + 1].split(":"));
 				currentPoke.teraType = getTeraType(rows[i + 1].split(":"));
 				currentPoke = getStats(currentPoke, rows, i + 1);
 				currentPoke = getMoves(currentPoke, rows, i);
+				if(tierLevelCap > 0)
+				{
+					currentPoke.level = tierLevelCap
+				}
 				addToDex(currentPoke);
 				addedpokes++;
-				break;
 			}
 		}
 	}
 	if (addedpokes > 0) {
-		get_box()
 		alert("Successfully imported " + addedpokes + " set(s)");
 		$(allPokemon("#importedSetsOptions")).css("display", "inline");
 	} else {
@@ -345,6 +347,14 @@ function checkExeptions(poke) {
 	case 'Florges-Yellow':
 		poke = "Florges";
 		break;
+	case 'Shellos-East':
+		poke = "Shellos";
+		break;
+	case 'Deerling-Summer':
+	case 'Deerling-Autumn':
+	case 'Deerling-Winter':
+		poke = "Deerling";
+		break;
 	}
 	return poke;
 
@@ -356,7 +366,6 @@ $(allPokemon("#clearSets")).click(function () {
 		alert("Custom Sets successfully cleared. Please refresh the page.");
 		$(allPokemon("#importedSetsOptions")).hide();
 		loadDefaultLists();
-		$('.player-poks').html("")
 	}
 });
 
@@ -376,9 +385,50 @@ $(document).ready(function () {
 	if (localStorage.customsets) {
 		customSets = JSON.parse(localStorage.customsets);
 		updateDex(customSets);
-		get_box()
 		$(allPokemon("#importedSetsOptions")).css("display", "inline");
 	} else {
 		loadDefaultLists();
 	}
+	if(localStorage.customTiers){
+		customTiers=JSON.parse(localStorage.customTiers);
+		updateTierSelect();
+		$("#clearCustom").attr("class", "");
+		$("#customSelect").attr("class", "");
+	}else{
+		customTiers=[];
+	}
 });
+
+var customTiers;
+
+$("#importTier").click(function(){
+	//Save info on the tier
+	var tier={
+		tierName:$("#tierName").prop("value"),
+		level:$("#tierLevel").prop("value"),
+		doubles:$("#isDoubles").prop("checked")
+	};
+	var existing=[];
+	if(localStorage.customTiers)existing=JSON.parse(localStorage.customTiers);
+	if(existing.filter(savedTier=>(savedTier.tierName===tier.tierName)).length===0){
+		customTiers.push(tier);
+		localStorage.customTiers=JSON.stringify(customTiers);
+		updateTierSelect();
+	}
+
+	$("#customSelect").attr("class", "");
+	$("#clearCustom").attr("class", "");
+	//Prepend tier name to set names
+	var pokes = document.getElementsByClassName("import-team-text")[0].value;
+	var tierName=tier.tierName;
+	var tierLevelCap=tier.level;
+	//Save sets
+	addSets(pokes, tierName, tierLevelCap);
+});
+
+function updateTierSelect(){
+	$("#customSelect").empty();//Easier to just empty and refill, idk if that's best
+	customTiers.forEach(function(tier){
+		$("#customSelect").append("<option value=\""+customTiers.indexOf(tier)+"\">"+tier.tierName+"</option>");
+	});
+}
