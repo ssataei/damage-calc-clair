@@ -37,6 +37,16 @@ export interface RawDesc {
     isBattery?: boolean;
     isPowerSpot?: boolean;
     isWonderRoom?: boolean;
+    isBrockRematch?: boolean;
+    isSwamp?: boolean;
+    isOmniBoost?: boolean;
+    isPryce?: boolean;
+    isInverse?: boolean;
+    isFireImmune?: boolean;
+    isMagnetRise?: boolean;
+    isMagmaStorm?: boolean;
+    isTrickRoom?: boolean;
+    isErikaRematch?: boolean;
     isSwitching?: 'out' | 'in';
     moveBP?: number;
     moveName: string;
