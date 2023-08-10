@@ -276,9 +276,9 @@ function getKOChance(gen, attacker, defender, move, field, damage, err) {
                 text: qualifier + "possible KO in ".concat(move.timesUsed, " turns").concat(afterText)
             };
         }
-        return { n: move.timesUsed, text: qualifier + 'not a KO' };
+        return { n: move.timesUsed, text: qualifier + '9HKO' };
     }
-    return { chance: 0, n: 0, text: '' };
+    return { chance: 0, n: 0, text: '9HKO' };
 }
 exports.getKOChance = getKOChance;
 function combine(damage) {
