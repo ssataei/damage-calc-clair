@@ -136,6 +136,34 @@ html, body {
     padding: 0;
     min-width: 100em;
 }
+
+.trainer-poks-label {
+    margin:  10px 0px;
+}
+
+.trainer-pok-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.trainer-pok-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.trainer-pok{
+    height:  100%;
+    width:  auto;
+    margin-right:  10px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.trainer-pok:hover {
+    outline: 2px solid;
+    outline-color: #1abc9c;
+}
+
 .wrapper {
     padding: 0 1em;
     max-width: 1285px;
@@ -177,6 +205,12 @@ th {
 }
 .big-text {
     text-align: left;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0.5em 0;
+}
+.big-text-right {
+    text-align: right;
     font-weight: bold;
     font-size: 1.1em;
     margin: 0.5em 0;
@@ -234,6 +268,9 @@ th {
 }
 .btn-wide {
     width: 7em;
+}
+.btn-ywide {
+    width: 7.5em;
 }
 .btn-xwide {
     width: 8em;

@@ -135,6 +135,8 @@ function getFinalSpeed(gen, pokemon, field, side) {
     var speedMods = [];
     if (side.isTailwind)
         speedMods.push(8192);
+    if (side.isSwamp)
+        speedMods.push(1024);
     if ((pokemon.hasAbility('Unburden') && pokemon.abilityOn) ||
         (pokemon.hasAbility('Chlorophyll') && weather.includes('Sun')) ||
         (pokemon.hasAbility('Sand Rush') && weather === 'Sand') ||
@@ -143,8 +145,11 @@ function getFinalSpeed(gen, pokemon, field, side) {
         (pokemon.hasAbility('Surge Surfer') && terrain === 'Electric')) {
         speedMods.push(8192);
     }
-    else if (pokemon.hasAbility('Quick Feet') && pokemon.status) {
+    else if (pokemon.named('Cherrim') && pokemon.hasAbility('Flower Gift') && weather.includes('Sun')) {
         speedMods.push(6144);
+    }
+    else if (pokemon.hasAbility('Quick Feet') && pokemon.status) {
+        speedMods.push(8192);
     }
     else if (pokemon.hasAbility('Slow Start') && pokemon.abilityOn) {
         speedMods.push(2048);
@@ -165,6 +170,12 @@ function getFinalSpeed(gen, pokemon, field, side) {
     else if (pokemon.hasItem('Quick Powder') && pokemon.named('Ditto')) {
         speedMods.push(8192);
     }
+    else if (pokemon.hasItem('Leek') && pokemon.named('Farfetch\u2019d')) {
+        speedMods.push(6144);
+    }
+    else if (pokemon.hasAbility('Bull Rush', 'Quill Rush') && pokemon.abilityOn) {
+        speedMods.push(6144);
+    }
     speed = OF32(pokeRound((speed * chainMods(speedMods, 410, 131172)) / 4096));
     if (pokemon.hasStatus('par') && !pokemon.hasAbility('Quick Feet')) {
         speed = Math.floor(OF32(speed * (gen.num < 7 ? 25 : 50)) / 100);
@@ -173,11 +184,32 @@ function getFinalSpeed(gen, pokemon, field, side) {
     return Math.max(0, speed);
 }
 exports.getFinalSpeed = getFinalSpeed;
-function getMoveEffectiveness(gen, move, type, isGhostRevealed, isGravity, isRingTarget) {
-    if ((isRingTarget || isGhostRevealed) && type === 'Ghost' && move.hasType('Normal', 'Fighting')) {
+function getMoveEffectiveness(gen, move, type, isGhostRevealed, isGravity, isRingTarget, isBoneZone, isCorrosion, isInverse) {
+    if (isInverse) {
+        var effectivenessInverse = gen.types.get((0, util_1.toID)(move.type)).effectiveness[type];
+        if (move.named('Freeze-Dry') && type === 'Water') {
+            return 2;
+        }
+        else if (move.named('Thousand Arrows') && type === 'Flying') {
+            return 2;
+        }
+        else if (effectivenessInverse < 1) {
+            return 2;
+        }
+        else if (effectivenessInverse > 1) {
+            return 0.5;
+        }
+        else {
+            return 1;
+        }
+    }
+    else if ((isRingTarget || isGhostRevealed) && type === 'Ghost' && move.hasType('Normal', 'Fighting')) {
         return 1;
     }
     else if ((isRingTarget || isGravity) && type === 'Flying' && move.hasType('Ground')) {
+        return 1;
+    }
+    else if (isCorrosion && type === 'Steel' && move.hasType('Poison')) {
         return 1;
     }
     else if (move.named('Freeze-Dry') && type === 'Water') {
@@ -187,8 +219,15 @@ function getMoveEffectiveness(gen, move, type, isGhostRevealed, isGravity, isRin
         return (gen.types.get('fighting').effectiveness[type] *
             gen.types.get('flying').effectiveness[type]);
     }
+    else if (move.named('Draco Barrage') && type === 'Fairy') {
+        return 1;
+    }
     else {
-        return gen.types.get((0, util_1.toID)(move.type)).effectiveness[type];
+        var effectiveness = gen.types.get((0, util_1.toID)(move.type)).effectiveness[type];
+        if (effectiveness === 0 && isBoneZone && move.flags.bone) {
+            return 1;
+        }
+        return effectiveness;
     }
 }
 exports.getMoveEffectiveness = getMoveEffectiveness;

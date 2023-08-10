@@ -7,6 +7,7 @@ export declare class Field implements State.Field {
     isMagicRoom: boolean;
     isWonderRoom: boolean;
     isGravity: boolean;
+    isInverse: boolean;
     isAuraBreak?: boolean;
     isFairyAura?: boolean;
     isDarkAura?: boolean;
@@ -40,6 +41,14 @@ export declare class Side implements State.Side {
     isFlowerGift: boolean;
     isFriendGuard: boolean;
     isAuroraVeil: boolean;
+    isBrockRematch: boolean;
+    isErikaRematch: boolean;
+    isSwamp: boolean;
+    isOmniBoost: boolean;
+    isPryce: boolean;
+    isFireImmune: boolean;
+    isMagnetRise: boolean;
+    isMagmaStorm: boolean;
     isBattery: boolean;
     isPowerSpot: boolean;
     isSwitching?: 'out' | 'in';

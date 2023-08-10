@@ -100,16 +100,15 @@ function performCalculations() {
 					defender2 = createPokemon(setOptions[i].id);
 //field.swap();
 //				if (mode === "one-vs-all") {
-//					attacker = createPokemon(pokeInfo);
 //					defender = createPokemon(setOptions[i].id);
-//					attacker2 = createPokemon(setOptions[i].id);
+//					attacker = createPokemon(pokeInfo);
 //					defender2 = createPokemon(pokeInfo);
+//					attacker2 = createPokemon(setOptions[i].id);
 //				} else {
 //					attacker = createPokemon(setOptions[i].id);
 //					defender = createPokemon(pokeInfo);
 //					attacker2 = createPokemon(pokeInfo);
 //					defender2 = createPokemon(setOptions[i].id);
-//					field.swap();
 //				}
 				if (attacker.ability === "Unburden") {
 					attacker.ability = "Pressure";
@@ -120,6 +119,10 @@ function performCalculations() {
 				if (defender.ability === "Rivalry") {
 					defender.gender = "N";
 				}
+				attacker.abilityOn = false;
+				//attacker2.abilityOn = false;
+				//defender.abilityOn = false;
+				defender2.abilityOn = false;
 				console.log(attacker, defender);
 				var damageResults = calculateMovesOfAttacker(gen, attacker, defender, field);
 				attacker = damageResults[0].attacker;
@@ -289,7 +292,13 @@ function performCalculations() {
 				data2 = data2.concat(data3);
 				data4 = data.concat(data2);
 
-				var KOFoe = ((data4[5].includes("OHKO")) ? true : false);
+//				player damage dealt:highestDamage2
+//				player hp:defender.curHP()
+//				ai damage dealt: highestDamage
+//				ai hp: defender2.curHP()
+
+//				var KOFoe = ((data4[5].includes("OHKO")) ? true : false);
+				var KOFoe = (((highestDamage*(96/100)) >= defender.curHP()) ? true : false);
 //				if (KOFoe) {
 //					var RevengeKill = ((["Moxie", "Grim Neigh", "Chilling Neigh", "As One (Spectrier)", "As One (Glastrier)", "Beast Boost", "Soul-Heart", "Battle Bond", "Shadow Tag", "Arena Trap", "Magnet Pull"].includes(data4[8])) ? true : false);
 //				}
@@ -297,7 +306,7 @@ function performCalculations() {
 //					var KOFoeInTwo = ((data4[5].includes("2HKO")) ? true : false);
 //					var RevengeKill = false;
 //				}
-				var KOFoeInTwo = ((data4[5].includes("2HKO") && !KOFoe) ? true : false);
+				var KOFoeInTwo = (((2*highestDamage*(96/100)) >= defender.curHP() && !KOFoe) ? true : false);
 				if (!Outspeeds){
 					Outspeeds = (!data4[10].includes("No") ? true : false);
 				}
@@ -315,32 +324,48 @@ function performCalculations() {
 				{
 					defCanWall = false;
 				}
-				var switchInScore = Math.max(KOFoe*31, KOFoeInTwo*2)
-					+ (RevengeKill*8)
-					+ (Outspeeds*14);
+				var switchInScore = (Outspeeds*14);
 
 				if (defFaintsToMove){
 					if (!Outspeeds){
 						switchInScore = Math.max(switchInScore - 39, 0);
 					}
-					else if (Outspeeds && !KOFoe)
-					{
-						switchInScore = Math.max(switchInScore - 15, 0);
-					}
-					else if (Outspeeds && KOFoe)
-					{
-						switchInScore = Math.max(switchInScore - 1, 0);
-					}
 				}
-				else if (defisWeakToMove && (!Outspeeds && !KOFoe)){
+				else if (defisWeakToMove){
 					switchInScore = Math.max(switchInScore - 1, 0);
 				}
-				else if (!defisNormalEffectiveness){
+				else if (!defisNormalEffectiveness && !defisWeakToMove){
 					switchInScore += 17;
 				}
-				else if (defCanWall) {
+				else if (defCanWall && !defisWeakToMove) {
 					switchInScore += 2;
 				}
+//				var switchInScore = Math.max(KOFoe*31, KOFoeInTwo*2)
+//					+ (RevengeKill*8)
+//					+ (Outspeeds*14);
+//
+//				if (defFaintsToMove){
+//					if (!Outspeeds){
+//						switchInScore = Math.max(switchInScore - 39, 0);
+//					}
+//					else if (Outspeeds && !KOFoe)
+//					{
+//						switchInScore = Math.max(switchInScore - 15, 0);
+//					}
+//					else if (Outspeeds && KOFoe)
+//					{
+//						switchInScore = Math.max(switchInScore - 1, 0);
+//					}
+//				}
+//				else if (defisWeakToMove){
+//					switchInScore = Math.max(switchInScore - 1, 0);
+//				}
+//				else if (!defisNormalEffectiveness && !defisWeakToMove){
+//					switchInScore += 17;
+//				}
+//				else if (defCanWall && !defisWeakToMove) {
+//					switchInScore += 2;
+//				}
 				data.push(Math.max(switchInScore, 0));
 //				console.log(KOFoe, KOFoeInTwo, RevengeKill, Outspeeds, defFaintsToMove, defisWeakToMove, defisNormalEffectiveness, defCanWall);
 //				debugger;
@@ -570,7 +595,7 @@ function constructDataTable() {
 				searchable: false
 			},
 			{
-				targets: [3, 16, 20, 22, 24, 26, 11, 12, 13, 14, 15],
+				targets: [3, 16, 20, 22, 24, 26, 11, 12, 13, 14, 15, 16],
 				type: 'damage100'
 			},
 			{

@@ -9,7 +9,7 @@ $("#p2 .item").bind("keyup change", function () {
 
 lastManualStatus["#p2"] = "Healthy";
 lastAutoStatus["#p1"] = "Healthy";
-
+var switchOutspeed;
 var resultLocations = [[], []];
 for (var i = 0; i < 4; i++) {
 	resultLocations[0].push({
@@ -39,10 +39,19 @@ function performCalculations() {
 	p2.maxDamages = [];
 	p1info.find(".sp .totalMod").text(p1.stats.spe);
 	p2info.find(".sp .totalMod").text(p2.stats.spe);
+//	if($('#swamp').prop("checked")) {
+//		p1.stats.spe /= 4;
+//	}
+	if($('#trickRoom').prop("checked")) {
+		var fastestSide = p1.stats.spe > p2.stats.spe ? 1 : p1.stats.spe === p2.stats.spe ? "tie" : 0;
+		switchOutspeed = p1.stats.spe >= p2.stats.spe ? 1 : 0;
+	} else {
 	var fastestSide = p1.stats.spe > p2.stats.spe ? 0 : p1.stats.spe === p2.stats.spe ? "tie" : 1;
-
+		switchOutspeed = p1.stats.spe > p2.stats.spe ? 0 : 1;
+	}
 	var result, maxDamage;
 	var bestResult;
+	var switchDamage;
 	var zProtectAlerted = false;
 	for (var i = 0; i < 4; i++) {
 		// P1
@@ -95,6 +104,24 @@ function performCalculations() {
 	bestResult.change();
 	$("#resultHeaderL").text(p1.name + "'s Moves (select one to show detailed results)");
 	$("#resultHeaderR").text(p2.name + "'s Moves (select one to show detailed results)");
+	var score = 14*switchOutspeed;
+	var switchHits = switchOutspeed === 1 ? "Outspeeds" : "Slower";
+	var koChanceSwitching = findDamageResult($(resultLocations[0][battling[0].maxDamages[0].moveOrder].move)).kochance().text;
+	if ((koChanceSwitching).includes("OHKO")) {
+			switchHits += ", Faints to Move(OHKO)";
+			score -= (39-(14*switchOutspeed));
+		} else if ((koChanceSwitching).includes("2HKO")) {
+			switchHits += ", Weak to Move(2HKO)";
+			score -= 1;
+		} else if ((koChanceSwitching).includes("3HKO")) {
+			switchHits += ", Walls Foe?(3HKO)";
+			score += 2;
+		} else {
+			switchHits += ", Resist All?(4+HKO)";
+			score += 17;
+		}
+	score = Math.max(score, 0);
+	$("#switchPriority").text("3P Theory: " + score + " - " + switchHits);
 }
 
 $(".result-move").change(function () {
@@ -140,7 +167,7 @@ function checkStatBoost(p1, p2) {
 			p1.boosts[stat] = Math.min(6, p1.boosts[stat] + 1);
 		}
 	}
-	if ($('#StatBoostR').prop("checked")) {
+	if ($('#StatBoostR').prop("checked") || $('#omniBoost').prop("checked")) {
 		for (var stat in p2.boosts) {
 			if (stat === 'hp') continue;
 			p2.boosts[stat] = Math.min(6, p2.boosts[stat] + 1);

@@ -41,6 +41,16 @@ export interface RawDesc {
   isBattery?: boolean;
   isPowerSpot?: boolean;
   isWonderRoom?: boolean;
+  isBrockRematch?: boolean;
+  isSwamp?: boolean;
+  isOmniBoost?: boolean;
+  isPryce?: boolean;
+  isInverse?: boolean;
+  isFireImmune?: boolean;
+  isMagnetRise?: boolean;
+  isMagmaStorm?: boolean;
+  isTrickRoom?: boolean;
+  isErikaRematch?: boolean;
   isSwitching?: 'out' | 'in';
   moveBP?: number;
   moveName: string;
@@ -626,6 +636,12 @@ function getEndOfTurn(
       texts.push('trapping damage');
     }
   }
+
+  if (!defender.hasAbility('Magic Guard') && field.defenderSide.isMagmaStorm && !defender.hasType('Fire')) {
+      damage -= gen.num > 5 ? Math.floor(defender.maxHP() / 8) : Math.floor(defender.maxHP() / 16);
+      texts.push('Permanent Magma Storm (Fire-Types Are Immune)');
+  }
+
   if (defender.isSaltCure && !defender.hasAbility('Magic Guard')) {
     const isWaterOrSteel = defender.hasType('Water', 'Steel') ||
       (defender.teraType && ['Water', 'Steel'].includes(defender.teraType));
@@ -963,6 +979,33 @@ function buildDescription(description: RawDesc, attacker: Pokemon, defender: Pok
   }
   if (description.isWonderRoom) {
     output += ' in Wonder Room';
+  }
+  if (description.isBrockRematch) {
+    output += ' (Brock: Super Effective Moves Deal 33% Less)';
+  }
+  if (description.isErikaRematch) {
+    output += ' (Erika: Grass Type Moves Deal 75% More Damage If Resisted)';
+  }
+  if (description.isInverse) {
+    output += ' (Inverse Battle)';
+  }
+  if (description.isSwamp) {
+    output += ' (Brendan: Quarters Enemy Speed)';
+  }
+  if (description.isPryce) {
+    output += ' (Pryce: 50% Defense Boost)';
+  }
+  if (description.isMagnetRise) {
+    output += ' (Wattson: Permanent Magnet Rise)';
+  }
+  if (description.isFireImmune) {
+    output += ' (Jasmine: Immune To Fire-Type Attacks)';
+  }
+  if (description.isTrickRoom) {
+    output += ' (Trick Room)';
+  }
+  if (description.isMagmaStorm) {
+    output += ' (Permanent Magma Storm)';
   }
   return output;
 }

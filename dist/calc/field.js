@@ -26,6 +26,7 @@ var Field = (function () {
         this.isMagicRoom = !!field.isMagicRoom;
         this.isWonderRoom = !!field.isWonderRoom;
         this.isGravity = !!field.isGravity;
+        this.isInverse = !!field.isInverse;
         this.isAuraBreak = field.isAuraBreak || false;
         this.isFairyAura = field.isFairyAura || false;
         this.isDarkAura = field.isDarkAura || false;
@@ -63,6 +64,7 @@ var Field = (function () {
             isMagicRoom: this.isMagicRoom,
             isWonderRoom: this.isWonderRoom,
             isGravity: this.isGravity,
+            isInverse: this.isInverse,
             attackerSide: this.attackerSide,
             defenderSide: this.defenderSide,
             isAuraBreak: this.isAuraBreak,
@@ -95,6 +97,14 @@ var Side = (function () {
         this.isTailwind = !!side.isTailwind;
         this.isHelpingHand = !!side.isHelpingHand;
         this.isFlowerGift = !!side.isFlowerGift;
+        this.isBrockRematch = !!side.isBrockRematch;
+        this.isErikaRematch = !!side.isErikaRematch;
+        this.isSwamp = !!side.isSwamp;
+        this.isOmniBoost = !!side.isOmniBoost;
+        this.isPryce = !!side.isPryce;
+        this.isFireImmune = !!side.isFireImmune;
+        this.isMagnetRise = !!side.isMagnetRise;
+        this.isMagmaStorm = !!side.isMagmaStorm;
         this.isFriendGuard = !!side.isFriendGuard;
         this.isAuroraVeil = !!side.isAuroraVeil;
         this.isBattery = !!side.isBattery;

@@ -226,10 +226,14 @@ $(".ability").bind("keyup change", function () {
 
 	var ability = $(this).closest(".poke-info").find(".ability").val();
 
-	var TOGGLE_ABILITIES = ['Flash Fire', 'Intimidate', 'Minus', 'Plus', 'Slow Start', 'Unburden', 'Stakeout'];
+	var TOGGLE_ABILITIES = ['Flash Fire', 'Intimidate', 'Minus', 'Plus', 'Slow Start', 'Unburden', 'Stakeout', 'Bull Rush', 'Quill Rush'];
+	var TOGGLE_ABILITIES_AUTO = ['Intimidate', 'Bull Rush', 'Quill Rush'];
 
 	if (TOGGLE_ABILITIES.indexOf(ability) >= 0) {
 		$(this).closest(".poke-info").find(".abilityToggle").show();
+		if (TOGGLE_ABILITIES_AUTO.indexOf(ability) >= 0) {
+			$(this).closest(".poke-info").find(".abilityToggle").prop("checked", true);
+		}
 	} else {
 		$(this).closest(".poke-info").find(".abilityToggle").hide();
 	}
@@ -299,6 +303,9 @@ function autosetWeather(ability, i) {
 		$("#strong-winds").prop("checked", true);
 		break;
 	default:
+		lastAutoWeather[i] = "";
+		var newWeather = lastAutoWeather[1 - i] !== "" ? lastAutoWeather[1 - i] : "";
+		$("input:radio[name='weather'][value='" + newWeather + "']").prop("checked", true);
 		break;
 	}
 }
@@ -349,6 +356,9 @@ var lastManualStatus = {"#p1": "Healthy"};
 var lastAutoStatus = {"#p1": "Healthy"};
 function autosetStatus(p, item) {
 	var currentStatus = $(p + " .status").val();
+	if (currentStatus !== lastAutoStatus[p]) {
+		lastManualStatus[p] = currentStatus;
+	}
 	if (item === "Flame Orb") {
 		lastAutoStatus[p] = "Burned";
 		$(p + " .status").val("Burned");
@@ -357,6 +367,12 @@ function autosetStatus(p, item) {
 		lastAutoStatus[p] = "Badly Poisoned";
 		$(p + " .status").val("Badly Poisoned");
 		$(p + " .status").change();
+	} else {
+		lastAutoStatus[p] = "Healthy";
+		if (currentStatus !== lastManualStatus[p]) {
+			$(p + " .status").val(lastManualStatus[p]);
+			$(p + " .status").change();
+		}
 	}
 }
 
@@ -911,6 +927,16 @@ function createField() {
 	var isMagicRoom = $("#magicroom").prop("checked");
 	var isWonderRoom = $("#wonderroom").prop("checked");
 	var isGravity = $("#gravity").prop("checked");
+	var isInverse = $("#inverse").prop("checked");
+	var isTrickRoom = $("#trickRoom").prop("checked");
+	var isSwamp = [$("#swamp").prop("checked"), 0];
+	var isOmniBoost = [0, $("#omniBoost").prop("checked")];
+	var isPryce = [0, $("#pryce").prop("checked")];
+	var isFireImmune = [0, $("#fireImmune").prop("checked")];
+	var isMagnetRise = [0, $("#magnetRise").prop("checked")];
+	var isMagmaStorm = [$("#magmaStorm").prop("checked"), 0];
+	var isBrockRematch = [0, $("#brockRematch").prop("checked")];
+	var isErikaRematch = [0, $("#erikaRematch").prop("checked")];
 	var isSR = [$("#srL").prop("checked"), $("#srR").prop("checked")];
 	var weather;
 	var spikes;
@@ -949,12 +975,15 @@ function createField() {
 			isReflect: isReflect[i], isLightScreen: isLightScreen[i],
 			isProtected: isProtected[i], isSeeded: isSeeded[i], isForesight: isForesight[i],
 			isTailwind: isTailwind[i], isHelpingHand: isHelpingHand[i], isFlowerGift: isFlowerGift[i], isFriendGuard: isFriendGuard[i],
+			isBrockRematch: isBrockRematch[i], isErikaRematch: isErikaRematch[i], isSwamp: isSwamp[i], isOmniBoost: isOmniBoost[i],
+			isPryce: isPryce[i], isFireImmune: isFireImmune[i], isMagnetRise: isMagnetRise[i], isMagmaStorm: isMagmaStorm[i],
 			isAuroraVeil: isAuroraVeil[i], isBattery: isBattery[i], isPowerSpot: isPowerSpot[i], isSwitching: isSwitchingOut[i] ? 'out' : undefined
 		});
 	};
 	return new calc.Field({
 		gameType: gameType, weather: weather, terrain: terrain,
 		isMagicRoom: isMagicRoom, isWonderRoom: isWonderRoom, isGravity: isGravity,
+		isInverse: isInverse, isTrickRoom: isTrickRoom,
 		isBeadsOfRuin: isBeadsOfRuin, isTabletsOfRuin: isTabletsOfRuin,
 		isSwordOfRuin: isSwordOfRuin, isVesselOfRuin: isVesselOfRuin,
 		attackerSide: createSide(0), defenderSide: createSide(1)

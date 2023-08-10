@@ -96,8 +96,8 @@ export function getFinalSpeed(gen: Generation, pokemon: Pokemon, field: Field, s
   const speedMods = [];
 
   if (side.isTailwind) speedMods.push(8192);
-  // Pledge swamp would get applied here when implemented
-  // speedMods.push(1024);
+  // Pledge swamp would get applied here when implemented (lmao)
+  if (side.isSwamp) speedMods.push(1024);
 
   if ((pokemon.hasAbility('Unburden') && pokemon.abilityOn) ||
       (pokemon.hasAbility('Chlorophyll') && weather.includes('Sun')) ||
@@ -107,8 +107,10 @@ export function getFinalSpeed(gen: Generation, pokemon: Pokemon, field: Field, s
       (pokemon.hasAbility('Surge Surfer') && terrain === 'Electric')
   ) {
     speedMods.push(8192);
-  } else if (pokemon.hasAbility('Quick Feet') && pokemon.status) {
+  } else if (pokemon.named('Cherrim') && pokemon.hasAbility('Flower Gift') && weather.includes('Sun')) {
     speedMods.push(6144);
+  } else if (pokemon.hasAbility('Quick Feet') && pokemon.status) {
+    speedMods.push(8192);
   } else if (pokemon.hasAbility('Slow Start') && pokemon.abilityOn) {
     speedMods.push(2048);
   } else if (
@@ -127,6 +129,10 @@ export function getFinalSpeed(gen: Generation, pokemon: Pokemon, field: Field, s
     speedMods.push(2048);
   } else if (pokemon.hasItem('Quick Powder') && pokemon.named('Ditto')) {
     speedMods.push(8192);
+  } else if (pokemon.hasItem('Leek') && pokemon.named('Farfetch\u2019d')) {
+    speedMods.push(6144);
+  }else if (pokemon.hasAbility('Bull Rush', 'Quill Rush') && pokemon.abilityOn) {
+    speedMods.push(6144);
   }
 
   speed = OF32(pokeRound((speed * chainMods(speedMods, 410, 131172)) / 4096));
@@ -145,10 +151,33 @@ export function getMoveEffectiveness(
   isGhostRevealed?: boolean,
   isGravity?: boolean,
   isRingTarget?: boolean,
+  isBoneZone?: boolean,
+  isCorrosion?: boolean,
+  isInverse?: boolean,
 ) {
-  if ((isRingTarget || isGhostRevealed) && type === 'Ghost' && move.hasType('Normal', 'Fighting')) {
+  if(isInverse){
+      const effectivenessInverse = gen.types.get(toID(move.type))!.effectiveness[type]!;
+      if (move.named('Freeze-Dry') && type === 'Water') {
+          return 2;
+      }
+      else if (move.named('Thousand Arrows') && type === 'Flying') {
+        return 2;
+      }
+      else if (effectivenessInverse < 1) {
+        return 2;
+      }
+      else if (effectivenessInverse > 1) {
+        return 0.5;
+      }
+      else {
+        return 1;
+      }
+  }
+  else if ((isRingTarget || isGhostRevealed) && type === 'Ghost' && move.hasType('Normal', 'Fighting')) {
     return 1;
   } else if ((isRingTarget || isGravity) && type === 'Flying' && move.hasType('Ground')) {
+    return 1;
+  } else if (isCorrosion && type === 'Steel' && move.hasType('Poison')) {
     return 1;
   } else if (move.named('Freeze-Dry') && type === 'Water') {
     return 2;
@@ -157,8 +186,14 @@ export function getMoveEffectiveness(
       gen.types.get('fighting' as ID)!.effectiveness[type]! *
       gen.types.get('flying' as ID)!.effectiveness[type]!
     );
+  } else if (move.named('Draco Barrage') && type === 'Fairy') {
+    return 1;
   } else {
-    return gen.types.get(toID(move.type))!.effectiveness[type]!;
+    const effectiveness = gen.types.get(toID(move.type))!.effectiveness[type]!;
+    if (effectiveness === 0 && isBoneZone && move.flags.bone) {
+      return 1;
+    }
+    return effectiveness;
   }
 }
 

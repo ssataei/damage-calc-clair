@@ -79,7 +79,6 @@ var GSC = [
     'Charcoal',
     'Dragon Fang',
     'Dragon Scale',
-    'Energy Powder',
     'Fast Ball',
     'Fire Stone',
     'Focus Band',

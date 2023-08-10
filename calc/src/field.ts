@@ -8,6 +8,7 @@ export class Field implements State.Field {
   isMagicRoom: boolean;
   isWonderRoom: boolean;
   isGravity: boolean;
+  isInverse: boolean;
   isAuraBreak?: boolean;
   isFairyAura?: boolean;
   isDarkAura?: boolean;
@@ -25,6 +26,7 @@ export class Field implements State.Field {
     this.isMagicRoom = !!field.isMagicRoom;
     this.isWonderRoom = !!field.isWonderRoom;
     this.isGravity = !!field.isGravity;
+    this.isInverse = !!field.isInverse;
     this.isAuraBreak = field.isAuraBreak || false;
     this.isFairyAura = field.isFairyAura || false;
     this.isDarkAura = field.isDarkAura || false;
@@ -58,6 +60,7 @@ export class Field implements State.Field {
       isMagicRoom: this.isMagicRoom,
       isWonderRoom: this.isWonderRoom,
       isGravity: this.isGravity,
+      isInverse: this.isInverse,
       attackerSide: this.attackerSide,
       defenderSide: this.defenderSide,
       isAuraBreak: this.isAuraBreak,
@@ -89,6 +92,14 @@ export class Side implements State.Side {
   isFlowerGift: boolean;
   isFriendGuard: boolean;
   isAuroraVeil: boolean;
+  isBrockRematch: boolean;
+  isErikaRematch: boolean;
+  isSwamp: boolean;
+  isOmniBoost: boolean;
+  isPryce: boolean;
+  isFireImmune: boolean;
+  isMagnetRise: boolean;
+  isMagmaStorm: boolean;
   isBattery: boolean;
   isPowerSpot: boolean;
   isSwitching?: 'out' | 'in';
@@ -109,6 +120,14 @@ export class Side implements State.Side {
     this.isTailwind = !!side.isTailwind;
     this.isHelpingHand = !!side.isHelpingHand;
     this.isFlowerGift = !!side.isFlowerGift;
+    this.isBrockRematch = !!side.isBrockRematch;
+    this.isErikaRematch = !!side.isErikaRematch;
+    this.isSwamp = !!side.isSwamp;
+    this.isOmniBoost = !!side.isOmniBoost;
+    this.isPryce = !!side.isPryce;
+    this.isFireImmune = !!side.isFireImmune;
+    this.isMagnetRise = !!side.isMagnetRise;
+    this.isMagmaStorm = !!side.isMagmaStorm;
     this.isFriendGuard = !!side.isFriendGuard;
     this.isAuroraVeil = !!side.isAuroraVeil;
     this.isBattery = !!side.isBattery;
