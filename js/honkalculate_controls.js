@@ -380,7 +380,14 @@ function performCalculations() {
 ////				else if (defCanWall && !defisWeakToMove) {
 ////					switchInScore += 2;
 ////				}
-
+//				if (defHasSpecialMove && attacker.stats.spd <= defender.stats.spa)
+//				{
+//					defCanWall = false;
+//				}
+//				else if (defHasPhysicalMove && attacker.stats.def <= defender.stats.atk)
+//				{
+//					defCanWall = false;
+//				}
 				var switchInScore = 14*(!data4[10].includes("No") ? true : false);
 				if (defrMidKO.includes("OHKO")) {
 						switchInScore -= 14;
@@ -391,7 +398,6 @@ function performCalculations() {
 					} else {
 						switchInScore += 15
 					}
-
 
 				data.push(switchInScore);
 //				console.log(KOFoe, KOFoeInTwo, RevengeKill, Outspeeds, defFaintsToMove, defisWeakToMove, defisNormalEffectiveness, defCanWall);
@@ -509,7 +515,7 @@ function performCalculations() {
 //				}
 				data.push((koActionsAgainstAI-koHitsAgainstAI)+playerOutspeeds*1);
 //				data.push(koHitsAgainstAI);
-//				data.push(koActionsAgainstAI);
+				data.push(koActionsAgainstAI);
 
 				data = data.concat(data2);
 				data = data.concat(data5);
@@ -641,19 +647,19 @@ function constructDataTable() {
 		destroy: true,
 		columnDefs: [
 			{
-				targets: (mode === "one-vs-all") ? [4, 5, 6, 7, 8, 9, 13, 14, 15, 18, 19] : [4, 5, 6, 7, 8, 9, 18, 19],
+				targets: (mode === "one-vs-all") ? [4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 19, 20] : [4, 5, 6, 7, 8, 9, 19, 20],
 				visible: false,
 				searchable: false
 			},
 			{
-				targets: [3, 10, 11, 12, 13, 14, 15, 17, 21, 23, 25, 27, 29, 31, 33, 35],
+				targets: [3, 11, 12, 13, 14, 15, 16, 18, 22, 24, 26, 28, 30, 32, 34, 36],
 				type: 'damage100'
 			},
 			{
-				targets: [4, 18],
+				targets: [4, 19],
 				type: 'damage48'
 			},
-			{targets: [5, 19],
+			{targets: [5, 20],
 				iDataSort: 2
 			}
 		],
