@@ -549,6 +549,7 @@ var SV = SS.concat([
     'Lustrous Globe',
     'Griseous Core',
     'Strange Ball',
+    'Debug Stick',
 ]);
 var BERRIES = {
     'Aguav Berry': { t: 'Dragon', p: 80 },

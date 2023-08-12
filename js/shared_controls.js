@@ -785,7 +785,6 @@ function createPokemon(pokeInfo) {
 		var setName = pokeInfo.substring(pokeInfo.indexOf("(") + 1, pokeInfo.lastIndexOf(")"));
 		var isRandoms = $("#randoms").prop("checked");
 		var set = isRandoms ? randdex[name] : setdex[name][setName];
-
 		var ivs = {};
 		var evs = {};
 		for (var i = 0; i < LEGACY_STATS[gen].length; i++) {
@@ -817,7 +816,6 @@ function createPokemon(pokeInfo) {
 				return move.category !== "Status";
 			});
 		}
-
 		return new calc.Pokemon(gen, name, {
 			level: set.level,
 			ability: set.ability,
@@ -859,6 +857,7 @@ function createPokemon(pokeInfo) {
 		pokeInfo.isDynamaxed = isDynamaxed;
 		calcHP(pokeInfo);
 		var curHP = ~~pokeInfo.find(".current-hp").val();
+		// curHP -= 500;
 		// FIXME the Pokemon constructor expects non-dynamaxed HP
 		if (isDynamaxed) curHP = Math.floor(curHP / 2);
 		var types = [pokeInfo.find(".type1").val(), pokeInfo.find(".type2").val()];

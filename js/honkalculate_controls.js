@@ -92,7 +92,7 @@ function performCalculations() {
 //			if (selectedTiers.indexOf(setTier) !== -1) {
 //			if (setTier.indexOf(selectedTiers) !== -1) {
 			if (selectedTiers == setTier){ // || setTier == "SidneyInsane" || setTier == "PhoebeInsane" || setTier == "GlaciaInsane" || setTier == "DrakeInsane" || setTier == "WallaceInsane") {
-				console.log(selectedTiers.indexOf(setTier));
+				//console.log(selectedTiers.indexOf(setTier));
 				var field = createField();
 					attacker = createPokemon(setOptions[i].id);
 					defender = createPokemon(pokeInfo);
@@ -119,11 +119,14 @@ function performCalculations() {
 				if (defender.ability === "Rivalry") {
 					defender.gender = "N";
 				}
-				attacker.abilityOn = false;
+//				if(mode === "one-vs-all"){
+//					attacker.abilityOn = false;
+//					defender2.abilityOn = false;
+//				}
+
 				//attacker2.abilityOn = false;
 				//defender.abilityOn = false;
-				defender2.abilityOn = false;
-				console.log(attacker, defender);
+				//console.log(attacker, defender);
 				var damageResults = calculateMovesOfAttacker(gen, attacker, defender, field);
 				attacker = damageResults[0].attacker;
 				defender = damageResults[0].defender;
@@ -132,6 +135,8 @@ function performCalculations() {
 				var data = [attacker.name];
 				var data5 = [];
 				var data7 = [];
+				var atkrMidKO = "";
+				var defrMidKO = "";
 				var defHasPhysicalMove = false;
 				var defPriorityOverride = false;
 				var defFaintsToMove = false;
@@ -161,6 +166,7 @@ function performCalculations() {
 						data.push(minPercentage + " - " + maxPercentage + "%");
 						data.push(minPixels + " - " + maxPixels + "px");
 						data.push(result.kochance(false).text);
+						atkrMidKO = result.aikochance(err=false, midroll=true).text;
 //						data.push(attacker.moves[n].bp === 0 ? 'nice move' : (result.kochance(false).text || 'possibly the worst move ever'));
 					}
 						data7.push(attacker.name.replace("-", "").substring(0, 6) + "_" + parseInt(minPercentage) + "_" + attacker.moves[n].name.replace(" ", "").substring(0, 5));
@@ -185,7 +191,7 @@ function performCalculations() {
 							}
 						}
 				}
-				console.log(data);
+				//console.log(data);
 				data.push((mode === "one-vs-all") ? attacker.types[0] : attacker.types[0]);
 				data.push(((mode === "one-vs-all") ? attacker.types[1] : attacker.types[1]) || "");
 				data.push(((mode === "one-vs-all") ? attacker.ability : attacker.ability) || "");
@@ -212,9 +218,14 @@ function performCalculations() {
 //					defender2.ability = "Pressure";
 //				}
 //				defender2.nature = "Bold";
+//				defender2.originalCurHP() = 4;
+//				attacker2.originalCurHP() = 4;
+//				defender.originalCurHP() = 4;
+//				attacker.originalCurHP() = 4;
 				var damageResults2 = calculateMovesOfAttacker(gen, attacker2, defender2, field2);
 				attacker2 = damageResults2[0].attacker;
 				defender2 = damageResults2[0].defender;
+				//debugger;
 				var result2, minMaxDamage2, minDamage2, maxDamage2, minPercentage2, maxPercentage2, minPixels2, maxPixels2;
 				var highestDamage2 = -1;
 //				var data = [setOptions[i].id];
@@ -249,6 +260,7 @@ function performCalculations() {
 						data2.push(minPixels2 + " - " + maxPixels2 + "px");
 //						data2.push(attacker2.moves[n].bp === 0 ? 'nice move' : (result2.kochance(false).text || 'possibly the worst move ever'));
 						data2.push(result2.kochance(false).text);
+						defrMidKO = result2.aikochance(err=false, midroll=true).text;
 					}
 					data7.push(attacker2.name.replace("-", "").substring(0, 6) + "_" + parseInt(minPercentage2) + "_" + attacker2.moves[n].name.replace(" ", "").substring(0, 5));
 //					data7.push(attacker2.name.replace("-", "") + ": " + attacker2.moves[n].name.replace(" ", ""));
@@ -368,12 +380,13 @@ function performCalculations() {
 ////				else if (defCanWall && !defisWeakToMove) {
 ////					switchInScore += 2;
 ////				}
+
 				var switchInScore = 14*(!data4[10].includes("No") ? true : false);
-				if (data4[14].includes("OHKO")) {
+				if (defrMidKO.includes("OHKO")) {
 						switchInScore -= 14;
-					} else if (data4[14].includes("2HKO")) {
+					} else if (defrMidKO.includes("2HKO")) {
 						switchInScore -= 1;
-					} else if (data4[14].includes("3HKO")) {
+					} else if (defrMidKO.includes("3HKO")) {
 						switchInScore += 2;
 					} else {
 						switchInScore += 15
@@ -470,16 +483,40 @@ function performCalculations() {
 				myHitsSitrus += Math.ceil((myHP+25.00) / parseFloat(data2[1].substring(data2[1].indexOf(" ")+2, data2[1].indexOf("%"))));
 				theirHits += Math.ceil((theirHP-prioityDamage) / parseFloat(data[3].substring(0, data[3].indexOf(" "))));
 				theirHitsScarf += Math.ceil((theirHP-(prioityDamage*1.2)) / (parseFloat(data[3].substring(0, data[3].indexOf(" ")))*1.2));
-				//data.push(myHits >= theirHits);
-//				data.push(myHits >= theirHitsScarf);
-//				data.push(myHitsSitrus >= theirHits);
+
 				data.push(Math.max(0,parseInt(myHP - ((theirHits-1)*parseFloat(data2[1].substring(data2[1].indexOf(" ")+2, data2[1].indexOf("%")))))));
 				data.push(Math.max(0,parseInt(myHP - ((theirHitsScarf-1)*parseFloat(data2[1].substring(data2[1].indexOf(" ")+2, data2[1].indexOf("%")))))));
-				data.push(Math.max(0, parseInt((myHP+25) - ((theirHitsScarf-1)*parseFloat(data2[1].substring(data2[1].indexOf(" ")+2, data2[1].indexOf("%")))))));
+				//data.push(Math.max(0, parseInt((myHP+25) - ((theirHitsScarf-1)*parseFloat(data2[1].substring(data2[1].indexOf(" ")+2, data2[1].indexOf("%")))))));
+				if (mode === "all-vs-one"){
+					var koChanceAgainstAI = data4[5];
+					var koChanceAgainstPlayer = data4[14];
+					var playerOutspeeds = (data4[10].includes("Yes") ? true : false);
+				} else {
+					var koChanceAgainstAI = data4[14];
+					var koChanceAgainstPlayer = data4[5];
+					var playerOutspeeds = (data4[10].includes("No") ? true : false);
+				}
+				var koHitsAgainstAI = (koChanceAgainstAI.includes("OHKO") ? 1 : parseInt(koChanceAgainstAI.substring(koChanceAgainstAI.indexOf("HKO")-1, koChanceAgainstAI.indexOf("HKO"))));
+//				if (!playerOutspeeds){
+//					koHitsAgainstAI += 1;
+//				}
+				if (!koChanceAgainstAI.includes("guaranteed")){
+					koHitsAgainstAI += 1;
+				}
+				var koActionsAgainstAI = (koChanceAgainstPlayer.includes("OHKO") ? 1 : parseInt(koChanceAgainstPlayer.substring(koChanceAgainstPlayer.indexOf("HKO")-1, koChanceAgainstPlayer.indexOf("HKO"))));
+//				if (playerOutspeeds){
+//					koActionsAgainstAI += 1;
+//				}
+				data.push((koActionsAgainstAI-koHitsAgainstAI)+playerOutspeeds*1);
+//				data.push(koHitsAgainstAI);
+//				data.push(koActionsAgainstAI);
+
 				data = data.concat(data2);
 				data = data.concat(data5);
 				data = data.concat(data7);
 				//data.push(data2);
+
+
 				dataSet.push(data);
 			}
 		}
@@ -604,7 +641,7 @@ function constructDataTable() {
 		destroy: true,
 		columnDefs: [
 			{
-				targets: (mode === "one-vs-all") ? [4, 5, 6, 7, 8, 9, 12, 13, 14, 18, 19] : [4, 5, 6, 7, 8, 9, 18, 19],
+				targets: (mode === "one-vs-all") ? [4, 5, 6, 7, 8, 9, 13, 14, 15, 18, 19] : [4, 5, 6, 7, 8, 9, 18, 19],
 				visible: false,
 				searchable: false
 			},

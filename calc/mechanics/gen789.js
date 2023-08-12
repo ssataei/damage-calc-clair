@@ -61,9 +61,22 @@ function calculateSMSSSV(gen, attacker, defender, move, field) {
             defender.ability = '';
         }
     }
+    var aiCrit = 0;
+    if (attacker.hasAbility('Super Luck')) {
+        aiCrit += 1;
+    }
+    if (attacker.hasItem('Razor Claw', 'Scope Lens')) {
+        aiCrit += 1;
+    }
+    if (move.named('Karate Chop', 'Razor Wind', 'Razor Leaf', 'Sky Attack', 'Crabhammer', 'Slash', 'Aeroblast', 'Crosschop', 'Blaze Kick', 'Air Cutter', 'Poison Tail', 'Leaf Blade', 'Night Slash', 'Shadow Claw', 'Psycho Cut', 'Cross Poison', 'Stone Edge', 'Attack Order', 'Spacial Rend', 'Drill Run', 'Snipe Shot', 'Drill Peck', 'Razor Shell', 'Stone Axe', 'Ceaseless Edge', 'Dire Claw', 'Aqua Cutter', 'Esper Wing', 'Triple Arrows')) {
+        aiCrit += 1;
+    }
     var isCritical = !defender.hasAbility('Battle Armor', 'Shell Armor') &&
-        (move.isCrit || (attacker.hasAbility('Merciless') && defender.hasStatus('psn', 'tox'))) &&
+        (aiCrit >= 2 || move.isCrit || (attacker.hasAbility('Merciless') && defender.hasStatus('psn', 'tox'))) &&
         move.timesUsed === 1;
+    if (aiCrit >= 2 && !defender.hasAbility('Battle Armor', 'Shell Armor')) {
+        desc.isAICritical = true;
+    }
     var type = move.type;
     if (move.named('Weather Ball')) {
         var holdingUmbrella = attacker.hasItem('Utility Umbrella');
@@ -821,7 +834,7 @@ function calculateBPModsSMSSSV(gen, attacker, defender, move, field, desc, baseP
         desc.alliesFainted = attacker.alliesFainted;
     }
     if (attacker.hasItem("".concat(move.type, " Gem"))) {
-        bpMods.push(6144);
+        bpMods.push(gen.num > 5 ? 5325 : 6144);
         desc.attackerItem = attacker.item;
     }
     else if ((((attacker.hasItem('Adamant Crystal') && attacker.named('Dialga-Origin')) ||
@@ -847,6 +860,10 @@ function calculateBPModsSMSSSV(gen, attacker, defender, move, field, desc, baseP
     else if ((attacker.hasItem('Muscle Band') && move.category === 'Physical') ||
         (attacker.hasItem('Wise Glasses') && move.category === 'Special')) {
         bpMods.push(4505);
+        desc.attackerItem = attacker.item;
+    }
+    else if ((attacker.hasItem('Debug Stick'))) {
+        bpMods.push(4915);
         desc.attackerItem = attacker.item;
     }
     return bpMods;
