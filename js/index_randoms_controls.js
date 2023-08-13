@@ -53,10 +53,19 @@ function performCalculations() {
 	var bestResult;
 	var switchDamage;
 	var zProtectAlerted = false;
+	var hasPhysicalMove = false;
+	var hasSpecialMove = false;
 	for (var i = 0; i < 4; i++) {
 		// P1
 		result = damageResults[0][i];
 		maxDamage = result.range()[1] * p1.moves[i].hits;
+		if (maxDamage > 0){
+			if (result.move.category === "Physical"){
+				hasPhysicalMove = true;
+			} else if (result.move.category === "Special"){
+				hasSpecialMove = true;
+			}
+		}
 		if (!zProtectAlerted && maxDamage > 0 && p1.item.indexOf(" Z") === -1 && p1field.defenderSide.isProtected && p1.moves[i].isZ) {
 			alert('Although only possible while hacking, Z-Moves fully damage through protect without a Z-Crystal');
 			zProtectAlerted = true;
@@ -107,20 +116,26 @@ function performCalculations() {
 	var score = 14*switchOutspeed;
 	var switchHits = switchOutspeed === 1 ? "Outspeeds" : "Slower";
 	var koChanceSwitching = findDamageResult($(resultLocations[0][battling[0].maxDamages[0].moveOrder].move)).aikochance().text;
+	console.log(hasPhysicalMove, hasSpecialMove, (p1.stats.atk >= p2.stats.def), (p1.stats.spa >= p2.stats.spd), p1.stats, p2.stats);
+//	debugger;
 	if ((koChanceSwitching).includes("OHKO")) {
 			switchHits += ", Faints to Move(OHKO)";
-			score -= 14;
+			score -= 39;
 		} else if ((koChanceSwitching).includes("2HKO")) {
 			switchHits += ", Weak to Move(2HKO)";
 			score -= 1;
 		} else if ((koChanceSwitching).includes("3HKO")) {
-			switchHits += ", Walls Foe?(3HKO)";
+			if((hasPhysicalMove && (p1.stats.atk >= p2.stats.def)) || (hasSpecialMove && (p1.stats.spa >= p2.stats.spd))){
+				switchHits += ", Mid (3HKO)";
+				score += 0;
+			} else {
+				switchHits += ", Walls Foe (3HKO)";
 			score += 2;
 		} else {
-			switchHits += ", Resist All?(4+HKO)";
-			score += 15;
+			switchHits += ", Resist All(4HKO)";
+			score += 17;
 		}
-	//score = Math.max(score, 0);
+	score = Math.max(score, 0);
 	$("#switchPriority").text("3P Theory: " + score + " - " + switchHits);
 }
 

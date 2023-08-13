@@ -388,17 +388,41 @@ function performCalculations() {
 //				{
 //					defCanWall = false;
 //				}
+//				var switchInScore = 14*(!data4[10].includes("No") ? true : false);
+//				if (defrMidKO.includes("OHKO")) {
+//						switchInScore -= 14;
+//					} else if (defrMidKO.includes("2HKO")) {
+//						switchInScore -= 1;
+//					} else if (defrMidKO.includes("3HKO")) {
+//						switchInScore += 0;
+//					} else {
+//						switchInScore += 17
+//					}
+				if (defHasSpecialMove && attacker.stats.spd <= defender.stats.spa)
+				{
+					defCanWall = false;
+				}
+				else if (defHasPhysicalMove && attacker.stats.def <= defender.stats.atk)
+				{
+					defCanWall = false;
+				}
 				var switchInScore = 14*(!data4[10].includes("No") ? true : false);
 				if (defrMidKO.includes("OHKO")) {
 						switchInScore -= 14;
 					} else if (defrMidKO.includes("2HKO")) {
 						switchInScore -= 1;
 					} else if (defrMidKO.includes("3HKO")) {
-						switchInScore += 2;
+						if (defCanWall) {
+							switchInScore += 2;
+						} else{
+							switchInScore += 0;
+						}
 					} else {
-						switchInScore += 15
+						switchInScore += 17
 					}
-
+//else if (defrMidKO.includes("3HKO")) {
+//						switchInScore += 2;
+//					}
 				data.push(switchInScore);
 //				console.log(KOFoe, KOFoeInTwo, RevengeKill, Outspeeds, defFaintsToMove, defisWeakToMove, defisNormalEffectiveness, defCanWall);
 //				debugger;
